@@ -6,9 +6,9 @@ import shutil
 import requests
 import xmltodict
 from bs4 import BeautifulSoup
-from telegram.ext import Updater, MessageHandler, Filters
+from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
-TOKEN=''
+TOKEN = ''
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -64,6 +64,11 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 
+def reload_db(bot, update):
+    download_new_file()
+    open_file()
+
+
 def open_file():
     files_list = (glob.glob('*.xml'))
     if not files_list:
@@ -94,6 +99,8 @@ def main():
 
     # log all errors
     dp.add_error_handler(error)
+
+    dp.add_handler(CommandHandler("reload", reload_db))
 
     # Start the Bot
     updater.start_polling()
